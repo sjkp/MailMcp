@@ -13,6 +13,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+nupkg/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -382,3 +383,4 @@ appsettings.Local.json
 
 # MCP Server settings (if contains sensitive data)
 .gemini/settings.json
+.gemini/dont-settings.json
