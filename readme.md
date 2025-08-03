@@ -18,7 +18,35 @@
     }
 }
 ```
+"command": "dotnet",
+            "args": [
+                "run",
+                "C:/projects/MailMcp/MailMcp/bin/Debug/net10.0/MailMcp.dll",
+                "--project",
+                "C:/projects/MailMcp/MailMcp/"
+            ],
 
+
+If you want to run from the dotnet tool directly 
+```
+{
+    "mcpServers": {
+        "mail-server": {
+            "command": "dnx",
+            "args": [
+                "MailMcp",
+                "-y"
+            ],
+            "env": {
+                "IMAP_HOST": "",
+                "IMAP_PORT": "993",
+                "IMAP_USERNAME": "",
+                "IMAP_PASSWORD": ""
+            }
+        }
+    }
+}
+```
 
 npx https://github.com/google-gemini/gemini-cli
 
