@@ -10,56 +10,16 @@ using System.Threading.Tasks;
 public static class EmailFolderTool
 {
     [McpServerTool, Description("Lists all folders from an IMAP email server.")]
-    public static async Task<string> ListFolders()
+    public static async Task<string> ListFolders(ImapClient client)
     {
-        var host = Environment.GetEnvironmentVariable("IMAP_HOST");
-        var portString = Environment.GetEnvironmentVariable("IMAP_PORT");
-        var username = Environment.GetEnvironmentVariable("IMAP_USERNAME");
-        var password = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
-
-        if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(portString) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        {
-            return "Error: IMAP_HOST, IMAP_PORT, IMAP_USERNAME and IMAP_PASSWORD environment variables must be set.";
-        }
-
-        if (!int.TryParse(portString, out var port))
-        {
-            return "Error: IMAP_PORT environment variable must be a valid integer.";
-        }
-
-        using var client = new ImapClient();
-        await client.ConnectAsync(host, port, true);
-        await client.AuthenticateAsync(username, password);
-
         var folders = await client.GetFoldersAsync(client.PersonalNamespaces[0]);
-
-        await client.DisconnectAsync(true);
 
         return string.Join("\n", folders.Select(f => f.FullName));
     }
 
     [McpServerTool, Description("Creates a new folder on the IMAP server.")]
-    public static async Task<string> CreateFolder(CreateImapFolderArgs args)
+    public static async Task<string> CreateFolder(ImapClient client, CreateImapFolderArgs args)
     {
-        var host = Environment.GetEnvironmentVariable("IMAP_HOST");
-        var portString = Environment.GetEnvironmentVariable("IMAP_PORT");
-        var username = Environment.GetEnvironmentVariable("IMAP_USERNAME");
-        var password = Environment.GetEnvironmentVariable("IMAP_PASSWORD");
-
-        if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(portString) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        {
-            return "Error: IMAP_HOST, IMAP_PORT, IMAP_USERNAME and IMAP_PASSWORD environment variables must be set.";
-        }
-
-        if (!int.TryParse(portString, out var port))
-        {
-            return "Error: IMAP_PORT environment variable must be a valid integer.";
-        }
-
-        using var client = new ImapClient();
-        await client.ConnectAsync(host, port, true);
-        await client.AuthenticateAsync(username, password);
-
         var personalNamespace = client.PersonalNamespaces[0];
         IMailFolder? parentFolder;
         if (string.IsNullOrEmpty(args.ParentFolder))
@@ -74,7 +34,6 @@ public static class EmailFolderTool
 
         var newFolder = await parentFolder.CreateAsync(args.FolderName, true);
         newFolder.Subscribe();
-        await client.DisconnectAsync(true);
 
         return $"Created folder: {newFolder.FullName}";
     }
