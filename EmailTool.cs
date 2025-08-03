@@ -63,9 +63,9 @@ public static class EmailTool
             return $"Error: Folder '{args.DestinationFolder}' does not exist.";
         }
 
-        await folder.MoveToAsync(new UniqueId(args.Uid), destination);
+        await folder.MoveToAsync(args.Uids.Select(uid => new UniqueId(uid)).ToList(), destination);
 
-        return $"Email with UID {args.Uid} moved to folder '{args.DestinationFolder}'.";
+        return $"Emails with UIDs {string.Join(", ", args.Uids)} moved to folder '{args.DestinationFolder}'.";
     }
 
     [McpServerTool, Description("Get email body by UID return the HTML body if available, otherwise the text body.")]
